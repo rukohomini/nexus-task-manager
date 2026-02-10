@@ -1,78 +1,56 @@
 "use client";
-
 import { useState } from "react";
 
-interface Task {
-  id: number;
-  title: string;
-  completed: boolean;
-}
-
 export default function Home() {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [input, setInput] = useState("");
+  const [task, setTask] = useState("");
+  const [tasks, setTasks] = useState<string[]>([]);
 
   const addTask = () => {
-    if (input.trim() === "") return;
-    setTasks([...tasks, { id: Date.now(), title: input, completed: false }]);
-    setInput("");
+    if (task.trim() === "") return;
+    setTasks([...tasks, task]);
+    setTask("");
   };
 
-  const toggleTask = (id: number) => {
-    setTasks(
-      tasks.map((task) =>
-        task.id === id ? { ...task, completed: !task.completed } : task
-      )
-    );
-  };
-
-  const deleteTask = (id: number) => {
-    setTasks(tasks.filter((task) => task.id !== id));
+  const deleteTask = (index: number) => {
+    setTasks(tasks.filter((_, i) => i !== index));
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center p-4">
-      <h1 className="text-3xl font-bold mb-4">My Task Manager</h1>
+    <main className="min-h-screen bg-gray-100 flex flex-col items-center p-6">
+      <h1 className="text-4xl font-bold mb-2">Task Manager</h1>
+      <p className="mb-6 text-gray-600">Built by Rukohomini</p>
 
-      <div className="flex mb-4 w-full max-w-md">
+      <div className="w-full max-w-md flex gap-2 mb-6">
         <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Add a new task"
-          className="flex-1 p-2 border border-gray-300 rounded-l"
+          className="flex-1 p-3 border rounded-lg"
+          placeholder="Enter a new task..."
+          value={task}
+          onChange={(e) => setTask(e.target.value)}
         />
         <button
           onClick={addTask}
-          className="bg-blue-500 text-white px-4 rounded-r hover:bg-blue-600"
+          className="bg-black text-white px-4 rounded-lg"
         >
           Add
         </button>
       </div>
 
-      <ul className="w-full max-w-md">
-        {tasks.map((task) => (
-          <li
-            key={task.id}
-            className="flex justify-between items-center bg-white p-2 mb-2 rounded shadow"
+      <div className="w-full max-w-md space-y-3">
+        {tasks.map((t, index) => (
+          <div
+            key={index}
+            className="flex justify-between items-center bg-white p-3 rounded-lg shadow"
           >
-            <span
-              onClick={() => toggleTask(task.id)}
-              className={`flex-1 cursor-pointer ${
-                task.completed ? "line-through text-gray-400" : ""
-              }`}
-            >
-              {task.title}
-            </span>
+            <span>{t}</span>
             <button
-              onClick={() => deleteTask(task.id)}
-              className="text-red-500 hover:text-red-700"
+              onClick={() => deleteTask(index)}
+              className="text-red-500"
             >
               Delete
             </button>
-          </li>
+          </div>
         ))}
-      </ul>
-    </div>
+      </div>
+    </main>
   );
 }
